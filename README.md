@@ -1,18 +1,20 @@
-# 🏥 MediScan AI: Agentic Medical Imaging Assistant
+# 🏥 MediScan AI: Agentic Medical Imaging & Voice Assistant
 
-**MediScan AI** is an advanced AI-powered dashboard designed to analyze medical scans (X-rays, MRIs, CT scans) and provide an interactive assistant for patient-friendly discussions. Built with **Python**, **Streamlit**, and **OpenAI's GPT-4o**.
+**MediScan AI** is an advanced AI-powered dashboard designed to analyze medical scans (X-rays, MRIs, CT scans) and provide an interactive, voice-enabled assistant for patient-friendly discussions. Built with **Python**, **Streamlit**, and **OpenAI's GPT-4o**.
 
 ## 🚀 Key Features
-- **Multimodal AI Analysis:** Uses GPT-4o Vision to interpret medical images with expert-level precision.
-- **Structured Medical Reports:** Automatically generates findings, diagnostic assessments, and patient-friendly explanations.
-- **Interactive MediBot:** A context-aware chatbot that simplifies complex reports for patients.
-- **Modern Cyberpunk UI:** A sleek, professional dark-themed interface with neon gradients.
+- **📸 Multimodal AI Analysis:** Uses GPT-4o Vision to interpret medical images with expert-level precision.
+- **🎤 Voice-to-Text (Input):** Integrated **OpenAI Whisper** allows patients to ask questions using their voice instead of typing.
+- **🔊 Text-to-Speech (Output):** Integrated **OpenAI TTS** enables the assistant to speak back the analysis, making it accessible for everyone.
+- **📋 Structured Medical Reports:** Automatically generates findings, diagnostic assessments, and patient-friendly explanations.
+- **🤖 Interactive MediBot:** A context-aware conversational agent that simplifies complex medical reports.
+- **🌌 Modern Cyberpunk UI:** A sleek, professional dark-themed interface with neon gradients for a futuristic healthcare experience.
 
 ## 🛠️ Tech Stack
-- **Frontend:** Streamlit (Custom CSS)
-- **AI Engine:** OpenAI GPT-4o
+- **Frontend:** Streamlit (Custom CSS & Streamlit-Mic-Recorder)
+- **AI Engine:** OpenAI GPT-4o (Vision), Whisper-1 (Speech-to-Text), TTS-1 (Text-to-Speech)
 - **Language:** Python 3.10+
-- **Security:** Secret management for API keys via `.env` and Streamlit Secrets.
+- **Security:** Secret management for API keys via Streamlit Secrets.
 
 ## 📦 Installation & Local Setup
 
