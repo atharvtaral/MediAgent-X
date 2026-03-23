@@ -4,34 +4,24 @@ import base64
 import os
 from dotenv import load_dotenv
 
-# --- CONFIGURATION & SETUP ---
-# Load environment variables from .env file (used for local development)
+# --- CONFIGURATION ---
 load_dotenv()
-
-# Retrieve the OpenAI API Key from environment or Streamlit Secrets
-# This key is essential for the AI Agent to function
 API_KEY = os.getenv("OPENAI_API_KEY")
 
 if not API_KEY:
     st.error("❌ OpenAI API Key not found! Please add it to Streamlit Secrets or your .env file.")
     st.stop()
 
-# Initialize the OpenAI client to interact with GPT-4o
+# Initializing OpenAI client directly
 client = openai.OpenAI(api_key=API_KEY)
 
-# --- CORE AI AGENT LOGIC ---
+# --- AI LOGIC ---
 
 def analyze_medical_image(image_path):
-    """
-    This function acts as a 'Medical Imaging Agent'.
-    It converts the image to base64 and sends it to GPT-4o Vision 
-    with a specific expert persona and structured instructions.
-    """
-    # Encoding the image to base64 so it can be transmitted via the API
+    """Analyze image using GPT-4o Vision directly"""
     with open(image_path, "rb") as f:
         image_data = base64.b64encode(f.read()).decode("utf-8")
 
-    # The System Prompt defines the Agent's expertise and output format
     prompt_query = """
     You are a highly skilled medical imaging expert with extensive knowledge in radiology. 
     Analyze the medical image and structure your response as follows:
@@ -47,146 +37,134 @@ def analyze_medical_image(image_path):
     - Provide primary diagnosis and differential diagnoses ranked by likelihood.
 
     ### 4. Patient-Friendly Explanation
-    - Simplify findings in clear, non-technical language for the patient.
+    - Simplify findings in clear, non-technical language.
 
     ⚠️ Disclaimer: This is AI-assisted analysis only. Always consult a qualified doctor for final diagnosis.
     """
 
-    try:
-        # Calling the multimodal GPT-4o model
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_data}"}},
-                        {"type": "text", "text": prompt_query}
-                    ]
-                }
-            ],
-            max_tokens=2000
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        return f"Error during analysis: {str(e)}"
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_data}"}},
+                    {"type": "text", "text": prompt_query}
+                ]
+            }
+        ],
+        max_tokens=2000
+    )
+    return response.choices[0].message.content
 
 def get_chat_response(user_message, analysis_report):
-    """
-    This function powers 'MediBot', an interactive conversational agent.
-    It uses the analysis report as context to answer patient questions.
-    """
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": f"You are MediBot, a friendly medical assistant. Context: {analysis_report}. Explain findings simply and always remind the user to consult a doctor. 🏥"
-                },
-                {"role": "user", "content": user_message}
-            ],
-            max_tokens=1000
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        return f"Error in chat: {str(e)}"
+    """MediBot Chatbot logic"""
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": f"You are MediBot, a friendly medical assistant. Context: {analysis_report}. Explain simply and always end with: Please consult a qualified doctor. 🏥"
+            },
+            {"role": "user", "content": user_message}
+        ],
+        max_tokens=1000
+    )
+    return response.choices[0].message.content
 
-# --- STREAMLIT UI SETUP ---
+# --- UI SETUP ---
 
-# Configure page settings
 st.set_page_config(page_title="MediScan AI", page_icon="🏥", layout="wide")
 
-# Applying Custom CSS for a professional 'Cyberpunk/Medical' theme
-# Custom Cyberpunk Theme CSS
 st.markdown("""
 <style>
     .stApp { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: white; }
     
-    /* Analysis report card styling */
-    .report-card { background: rgba(255,255,255,0.05); border: 1px solid #00d4ff44; border-radius: 16px; padding: 20px; color: white !important; }
+    .report-card { background: rgba(255,255,255,0.05); border: 1px solid #00d4ff44; border-radius: 16px; padding: 20px; backdrop-filter: blur(10px); margin-top: 10px; color: white !important; }
     .report-card * { color: white !important; }
 
-    /* Fix for Chat Messages Text Visibility */
-    [data-testid="stChatMessage"] {
-        background: rgba(255,255,255,0.05) !important;
-        border-radius: 12px !important;
-        margin-bottom: 10px !important;
-    }
-    
-    /* Targeting all text inside chat messages to be white */
-    [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] div {
-        color: white !important;
-    }
+    [data-testid="stSidebar"] { background: linear-gradient(180deg, #1a1a2e, #16213e); border-right: 2px solid #00d4ff; }
+    [data-testid="stSidebar"] * { color: white !important; }
 
-    h1 { background: linear-gradient(90deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.8rem; font-weight: 800; text-align: center; }
-    [data-testid="stSidebar"] { background: #1a1a2e; border-right: 2px solid #00d4ff; }
-    .stButton > button { background: linear-gradient(90deg, #00d4ff, #7b2ff7) !important; color: white !important; border-radius: 10px; font-weight: 700; width: 100%; }
+    h1 { background: linear-gradient(90deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.8rem !important; font-weight: 800 !important; text-align: center; }
+    h2, h3 { color: #00d4ff !important; }
+
+    [data-testid="stChatMessage"] { background: rgba(255,255,255,0.05) !important; border-radius: 12px !important; border: 1px solid #7b2ff744 !important; margin-bottom: 8px !important; }
+    [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] * { color: white !important; }
+
+    .stButton > button { background: linear-gradient(90deg, #00d4ff, #7b2ff7) !important; color: white !important; border: none !important; border-radius: 10px !important; font-weight: 700 !important; font-size: 1rem !important; padding: 10px 24px !important; width: 100% !important; transition: all 0.3s ease !important; }
+    .stButton > button:hover { transform: scale(1.03); box-shadow: 0 0 20px #00d4ff88 !important; }
+
+    [data-testid="stFileUploader"] { background: rgba(0, 10, 40, 0.8) !important; border: 2px dashed #00d4ff !important; border-radius: 12px !important; padding: 10px !important; }
+    [data-testid="stChatInput"] { background: rgba(255,255,255,0.1) !important; border-radius: 12px !important; border: 1px solid #00d4ff !important; }
+    [data-testid="stImage"] img { border-radius: 16px !important; border: 2px solid #00d4ff !important; box-shadow: 0 0 30px #00d4ff44 !important; }
 </style>
 """, unsafe_allow_html=True)
-# Application Header
-st.markdown("<h1>🏥 MediScan AI</h1><p style='text-align:center; color:#a0a0c0;'>Agentic AI for Medical Imaging & Patient Assistance</p><hr>", unsafe_allow_html=True)
 
-# --- SESSION STATE MANAGEMENT ---
-# Storing analysis results and chat history so they don't disappear on refresh
-if "analysis_report" not in st.session_state:
-    st.session_state.analysis_report = None
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+# --- HEADER WITH ICONS & TAGS ---
+st.markdown("""
+<div style='text-align:center; padding: 10px 0 0 0;'>
+    <span style='font-size:3.5rem;'>🏥</span>
+    <h1>MediScan AI</h1>
+    <p style='color:#a0a0c0; font-size:1.1rem; margin-top:-10px;'>AI-Powered Medical Image Analysis & Patient Assistant</p>
+    <div style='display:flex; justify-content:center; gap:20px; margin:10px 0; flex-wrap:wrap;'>
+        <span style='background:rgba(0,212,255,0.15); border:1px solid #00d4ff; border-radius:20px; padding:4px 16px; font-size:0.85rem;'>🔬 X-Ray</span>
+        <span style='background:rgba(0,212,255,0.15); border:1px solid #00d4ff; border-radius:20px; padding:4px 16px; font-size:0.85rem;'>🧠 MRI</span>
+        <span style='background:rgba(0,212,255,0.15); border:1px solid #00d4ff; border-radius:20px; padding:4px 16px; font-size:0.85rem;'>🩻 CT Scan</span>
+        <span style='background:rgba(0,212,255,0.15); border:1px solid #00d4ff; border-radius:20px; padding:4px 16px; font-size:0.85rem;'>🔊 Ultrasound</span>
+    </div>
+    <hr>
+</div>
+""", unsafe_allow_html=True)
 
-# --- SIDEBAR: USER INPUT ---
-st.sidebar.markdown("### 🩺 Diagnostic Center")
-uploaded_file = st.sidebar.file_uploader("Upload Medical Scan (X-ray, MRI, etc.)", type=["jpg", "jpeg", "png"])
+# --- SESSION STATE ---
+if "analysis_report" not in st.session_state: st.session_state.analysis_report = None
+if "chat_history" not in st.session_state: st.session_state.chat_history = []
+
+# --- SIDEBAR ---
+st.sidebar.markdown("<div style='text-align:center;'><span style='font-size:2.5rem;'>🩺</span><h2 style='color:#00d4ff; margin:5px 0;'>Upload Image</h2></div>", unsafe_allow_html=True)
+uploaded_file = st.sidebar.file_uploader("Choose file...", type=["jpg", "jpeg", "png", "bmp", "gif"], label_visibility="collapsed")
 
 if uploaded_file:
-    # Button to trigger the AI Agent's analysis
-    st.sidebar.button("🔍 Run AI Analysis", key="analyze_btn")
+    st.sidebar.markdown("---")
+    st.sidebar.button("🔍 Analyze Image", key="analyze_btn")
 
-# --- MAIN DASHBOARD LAYOUT ---
+# --- MAIN DASHBOARD ---
 col1, col2 = st.columns([1, 1], gap="large")
 
-# LEFT COLUMN: Image display and Analysis Report
 with col1:
     if uploaded_file:
-        st.image(uploaded_file, caption="Uploaded Scan", use_container_width=True)
-        
+        st.markdown("### 🖼️ Uploaded Image")
+        st.image(uploaded_file, use_container_width=True)
+
         if st.session_state.get("analyze_btn"):
-            with st.spinner("🔬 Agent is interpreting the scan..."):
-                # Save uploaded file temporarily for the processing agent
-                temp_filename = f"temp_file.{uploaded_file.name.split('.')[-1]}"
-                with open(temp_filename, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                
-                # Execute analysis logic
-                report = analyze_medical_image(temp_filename)
-                st.session_state.analysis_report = report
-                st.session_state.chat_history = [] # Reset chat for a new scan
-                os.remove(temp_filename) # Clean up temp file
+            with st.spinner("🔬 Analyzing image with AI..."):
+                temp_path = f"temp_image.{uploaded_file.type.split('/')[1]}"
+                with open(temp_path, "wb") as f: f.write(uploaded_file.getbuffer())
+                st.session_state.analysis_report = analyze_medical_image(temp_path)
+                st.session_state.chat_history = []
+                os.remove(temp_path)
 
         if st.session_state.analysis_report:
-            st.markdown("### 📋 AI Analysis Report")
+            st.markdown("### 📋 Analysis Report")
             st.markdown(f"<div class='report-card'>{st.session_state.analysis_report}</div>", unsafe_allow_html=True)
     else:
-        st.info("👋 Welcome! Please upload a medical scan in the sidebar to begin the AI analysis.")
+        st.info("Please upload a medical image from the sidebar.")
 
-# RIGHT COLUMN: Interactive Chatbot (MediBot)
 with col2:
-    st.markdown("### 🤖 MediBot Assistant")
+    st.markdown("<div style='text-align:center;'><h3>🤖 MediBot Assistant</h3></div>", unsafe_allow_html=True)
     if st.session_state.analysis_report:
-        # Render the conversation history
         for chat in st.session_state.chat_history:
-            with st.chat_message("user"): st.write(chat["user"])
-            with st.chat_message("assistant"): st.write(chat["bot"])
+            with st.chat_message("user", avatar="👤"): st.write(chat["user"])
+            with st.chat_message("assistant", avatar="🩺"): st.write(chat["bot"])
 
-        # Capture user questions about the report
-        user_input = st.chat_input("Ask MediBot about these findings...")
+        user_input = st.chat_input("💬 Ask MediBot...")
         if user_input:
-            with st.spinner("MediBot is typing..."):
-                bot_res = get_chat_response(user_input, st.session_state.analysis_report)
-                st.session_state.chat_history.append({"user": user_input, "bot": bot_res})
-                st.rerun() # Refresh UI to show new message
+            bot_res = get_chat_response(user_input, st.session_state.analysis_report)
+            st.session_state.chat_history.append({"user": user_input, "bot": bot_res})
+            st.rerun()
     else:
-        st.markdown("<p style='color:#a0a0c0;'>MediBot will activate once an image is successfully analyzed.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; color:#a0a0c0;'>MediBot will activate after analysis.</p>", unsafe_allow_html=True)
 
-# --- FOOTER ---
-st.markdown("<hr><p style='text-align:center; font-size:0.8rem; color:#a0a0c0;'>Disclaimer: For educational purposes only. This AI agent is not a replacement for professional medical diagnosis.</p>", unsafe_allow_html=True)
+# Footer
+st.markdown("<hr><div style='text-align:center;'><p style='color:#a0a0c0; font-size:0.85rem;'>🏥 MediScan AI | For Educational Purposes Only</p></div>", unsafe_allow_html=True)
