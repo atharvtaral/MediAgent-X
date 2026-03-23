@@ -56,7 +56,7 @@ Ensure a structured and medically accurate response using clear markdown formatt
 
 
 def analyze_medical_image(image_path):
-    # Image को base64 मध्ये convert कर
+   
     with open(image_path, "rb") as f:
         image_data = base64.b64encode(f.read()).decode("utf-8")
 
@@ -372,7 +372,7 @@ with col2:
         # Chat input
         user_input = st.chat_input("💬 Ask MediBot your question...")
         if user_input:
-            with st.spinner("🤔 MediBot is thinking..."):
+            with st.spinner("🔎 MediBot is thinking..."):
                 bot_response = get_chat_response(user_input, st.session_state.analysis_report)
                 st.session_state.chat_history.append({
                     "user": user_input,
