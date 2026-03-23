@@ -76,10 +76,6 @@ def get_chat_response(user_message, analysis_report):
 
 st.set_page_config(page_title="MediScan AI", page_icon="🏥", layout="wide")
 
-मी तुझ्या medical.py मधील CSS कोडमध्ये काही महत्त्वपूर्ण बदल केले आहेत. यामुळे Upload Button ला तुझ्या ग्रेडियंट थीमप्रमाणे रंग मिळेल आणि जे Labels/Text बॅकग्राउंडमध्ये मिक्स होत होते (उदा. 'Browse files', file name, supported types text), ते आता पांढऱ्या रंगात स्पष्ट दिसतील.
-
-हे फिक्स करण्यासाठी तुझ्या medical.py मधील CSS ब्लॉक या कोडने बदला:
-Python
 # Apply Custom CSS to fix button color and text visibility
 st.markdown("""
 <style>
