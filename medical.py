@@ -98,26 +98,32 @@ def get_chat_response(user_message, analysis_report):
 st.set_page_config(page_title="MediScan AI", page_icon="🏥", layout="wide")
 
 # Applying Custom CSS for a professional 'Cyberpunk/Medical' theme
+# Custom Cyberpunk Theme CSS
 st.markdown("""
 <style>
-    /* Dark gradient background for the app */
     .stApp { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: white; }
     
-    /* Styling the analysis report box */
+    /* Analysis report card styling */
     .report-card { background: rgba(255,255,255,0.05); border: 1px solid #00d4ff44; border-radius: 16px; padding: 20px; color: white !important; }
+    .report-card * { color: white !important; }
+
+    /* Fix for Chat Messages Text Visibility */
+    [data-testid="stChatMessage"] {
+        background: rgba(255,255,255,0.05) !important;
+        border-radius: 12px !important;
+        margin-bottom: 10px !important;
+    }
     
-    /* Neon gradient title effect */
+    /* Targeting all text inside chat messages to be white */
+    [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] div {
+        color: white !important;
+    }
+
     h1 { background: linear-gradient(90deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.8rem; font-weight: 800; text-align: center; }
-    
-    /* Sidebar styling */
     [data-testid="stSidebar"] { background: #1a1a2e; border-right: 2px solid #00d4ff; }
-    
-    /* Custom button styling */
-    .stButton > button { background: linear-gradient(90deg, #00d4ff, #7b2ff7) !important; color: white !important; border-radius: 10px; font-weight: 700; width: 100%; transition: 0.3s; }
-    .stButton > button:hover { transform: scale(1.02); box-shadow: 0 0 15px #00d4ff88; }
+    .stButton > button { background: linear-gradient(90deg, #00d4ff, #7b2ff7) !important; color: white !important; border-radius: 10px; font-weight: 700; width: 100%; }
 </style>
 """, unsafe_allow_html=True)
-
 # Application Header
 st.markdown("<h1>🏥 MediScan AI</h1><p style='text-align:center; color:#a0a0c0;'>Agentic AI for Medical Imaging & Patient Assistance</p><hr>", unsafe_allow_html=True)
 
