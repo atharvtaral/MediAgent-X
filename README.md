@@ -16,6 +16,15 @@
 - **Language:** Python 3.10+
 - **Security:** Secret management for API keys via Streamlit Secrets.
 
+## 🛡️ Responsible AI & Ethical Considerations
+In healthcare AI, responsibility is as important as accuracy. This project adheres to key Ethical AI principles:
+
+- **Accuracy Awareness:** Integrated a clear **Disclaimer** in every report, stating that the AI's analysis is for educational purposes and not a final diagnosis.
+- **Human-in-the-loop:** Designed as a support tool for patients to better understand their scans before consulting a qualified medical professional.
+- **Transparency:** The AI explicitly structures its response to show "Diagnostic Assessment" separately from "Patient-Friendly Explanation" to avoid confusion.
+- **Data Privacy:** Uses **Streamlit Secrets** and `.env` to ensure API keys are never exposed, and temporary images are deleted from the server immediately after analysis.
+- **Inclusivity:** Added **Voice-to-Voice** features (Whisper & TTS) to assist users who may have difficulty typing or reading complex text.
+
 ## 📦 Installation & Local Setup
 
 1. **Clone the repository:**
