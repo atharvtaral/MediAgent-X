@@ -79,111 +79,44 @@ st.set_page_config(page_title="MediScan AI", page_icon="🏥", layout="wide")
 # Apply Custom CSS to fix button color and text visibility
 st.markdown("""
 <style>
-    /* 1. Main App Background & Base Text Color */
-    .stApp {
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        color: white;
-    }
+    .stApp { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: white; }
     
-    /* 2. Global Text Visibility Fixes (Labels, Captions, etc.) */
-    [data-testid="stWidgetLabel"] p, 
-    .stMarkdown p, 
-    .stCaption, 
-    label {
+    /* Fix for st.info() and st.warning() boxes */
+    .stAlert {
+        background-color: rgba(0, 212, 255, 0.1) !important;
+        border: 1px solid #00d4ff !important;
         color: white !important;
     }
+    .stAlert p { color: white !important; }
 
-    /* 3. Title Styling (Keep your original gradient) */
-    h1 {
-        background: linear-gradient(90deg, #00d4ff, #7b2ff7);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2.8rem !important;
-        font-weight: 800 !important;
-        text-align: center;
-    }
+    /* Titles & Headers */
+    h1 { background: linear-gradient(90deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.8rem !important; font-weight: 800 !important; text-align: center; }
     h2, h3 { color: #00d4ff !important; }
 
-    /* 4. Sidebar Styling */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1a1a2e, #16213e);
-        border-right: 2px solid #00d4ff;
-    }
-    /* Fix text color inside sidebar explicitly */
-    [data-testid="stSidebar"] * {
-        color: white !important;
-    }
+    /* Sidebar Fix */
+    [data-testid="stSidebar"] { background: linear-gradient(180deg, #1a1a2e, #16213e); border-right: 2px solid #00d4ff; }
+    [data-testid="stSidebar"] * { color: white !important; }
 
-    /* 5. Report Card Styling & Text */
-    .report-card {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid #00d4ff44;
-        border-radius: 16px;
-        padding: 20px;
-        backdrop-filter: blur(10px);
-        margin-top: 10px;
-        color: white !important;
-    }
-    .report-card * { color: white !important; }
-
-    /* 6. Chat Messages Text Fix (Essential) */
-    [data-testid="stChatMessage"] {
+    /* Report Card & Chat Messages */
+    .report-card, [data-testid="stChatMessage"] {
         background: rgba(255,255,255,0.05) !important;
-        border-radius: 12px !important;
         border: 1px solid #7b2ff744 !important;
-    }
-    [data-testid="stChatMessage"] p, 
-    [data-testid="stChatMessage"] div,
-    [data-testid="stChatMessage"] span {
+        border-radius: 12px !important;
         color: white !important;
     }
+    [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] div { color: white !important; }
 
-    /* 7. Button Styling - Gradient for ALL buttons (Run, Browse, etc.) */
-    /* Target regular buttons and file uploader buttons */
-    .stButton > button, 
-    [data-testid="stFileUploader"] button {
+    /* All Buttons Gradient */
+    .stButton > button, [data-testid="stFileUploader"] button {
         background: linear-gradient(90deg, #00d4ff, #7b2ff7) !important;
         color: white !important;
         border: none !important;
         border-radius: 10px !important;
         font-weight: 700 !important;
-        padding: 10px 24px !important;
-        width: 100% !important;
-        transition: all 0.3s ease !important;
-    }
-    .stButton > button:hover,
-    [data-testid="stFileUploader"] button:hover {
-        transform: scale(1.03);
-        box-shadow: 0 0 20px #00d4ff88 !important;
     }
 
-    /* 8. File Uploader Specific Text & UI Fixes */
-    [data-testid="stFileUploader"] {
-        background: rgba(0, 10, 40, 0.8) !important;
-        border: 2px dashed #00d4ff !important;
-        border-radius: 12px !important;
-        padding: 10px !important;
-    }
-    /* Fix color of 'Drag and drop file here' and other uploader text */
-    [data-testid="stFileUploader"] * {
-        color: white !important;
-    }
-    /* Specific fix for 'Browse files' text inside the button area if needed */
-    [data-testid="stFileUploader"] button span {
-        color: white !important;
-    }
-
-    /* 9. Input & UI Element Fixes */
-    [data-testid="stChatInput"] {
-        background: rgba(255,255,255,0.1) !important;
-        border-radius: 12px !important;
-        border: 1px solid #00d4ff !important;
-    }
-    [data-testid="stImage"] img {
-        border-radius: 16px !important;
-        border: 2px solid #00d4ff !important;
-        box-shadow: 0 0 30px #00d4ff44 !important;
-    }
+    /* Labels & Captions Fix */
+    [data-testid="stWidgetLabel"] p, .stMarkdown p, label { color: white !important; }
 </style>
 """, unsafe_allow_html=True)
 
